@@ -53,12 +53,7 @@ BACKUP_PATH="$BACKUP_ROOT/$BACKUP_NAME"
 }
 
 #rm -rf "$BACKUP_PATH"
-mkdir -p "$BACKUP_PATH/files"
-# В коммент поместим всю имеющуюся информацию, даже если она дублиется. Лучше пусть дублируется, чем её не будет.
-echo -e "Created `date` by $0\nSource: $SOURCE_PATH\nTarget: $BACKUP_PATH\nName: $BACKUP_NAME" > "$BACKUP_PATH/readme-auto.txt"
-
-echo -e "\n -- Creating files backup\n\n"
-rsync -av --delete --delete-excluded --exclude bitrix/backup --exclude upload/resize_cache --exclude bitrix/cache --exclude bitrix/managed_cache --exclude bitrix/stack_cache --exclude bitrix/html_pages  "$SOURCE_PATH/" "$BACKUP_PATH/files" 
+mkdir -p "$BACKUP_PATH"
 
 mysqlArgs="`php "$SCRIPT_DIR/get-mysql-command-args.php" "$SOURCE_PATH"`"
 
@@ -73,6 +68,9 @@ username="$1"
 password="$2"
 host="$3"
 dbname="$4"
+
+# В коммент поместим всю имеющуюся информацию, даже если она дублиется. Лучше пусть дублируется, чем её не будет.
+echo -e "Created `date` by $0\nSource: `realpath "$SOURCE_PATH"`\nTarget: $BACKUP_PATH\nName: $BACKUP_NAME" > "$BACKUP_PATH/readme-db-auto.txt"
 
 echo -e "\n -- Creating database backup\n\n"
 mysqldump -u "$username" -p"$password" -h "$host" "$dbname"  | gzip > "$BACKUP_PATH/db.sql.gz"
