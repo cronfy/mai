@@ -40,7 +40,7 @@ $vars = [
 ];
 
 foreach ($vars as $name => $arg) {
-	if (!preg_match('/^[a-zA-Z0-9_.@#$%^-]*$/', $arg)) {
+	if (!preg_match('/^[a-zA-Z0-9_.@#$%^!\[-]*$/', $arg)) {
 		throw new \Exception("Maybe wrong characters in $name: $arg");
 	}
 }
