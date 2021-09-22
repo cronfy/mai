@@ -2,10 +2,10 @@
 <?php
 
 /*
-Использование: в текущей директории (в которой находятся сайты) нужно создать файл maintenance.plan,
+Использование: в текущей директории (в которой находятся сайты) нужно создать файл .maintenance.plan,
 перечислить там сайты, которые нужно переключать, после чего запустить скрипт.
+*/
 
- */
 set_error_handler(
     function ($code, $message, $file = '', $line = 0) {
             if (error_reporting() === 0) {
@@ -30,7 +30,7 @@ set_error_handler(
 class Maintenancer {
 
 	protected function getFolders() {
-		$plan = file(getcwd() . '/maintenance.plan');
+		$plan = file(getcwd() . '/.maintenance.plan');
 
 		$result = [];
 		foreach ($plan as $line) {
@@ -94,11 +94,11 @@ class Maintenancer {
 		if (is_dir(getcwd() . "/$dir.maint") && is_dir(getcwd() . "/$dir")) {
 			rename($dir, $dir . ".prod");
 			rename($dir . ".maint", $dir);
-			echo " -- Site $dir -- maintenance ENABLED\n";
+			echo " -- Site $dir -- site DISABLED\n";
 			return;
 		}
 
-		throw new \Exception("Failed to enable maintenance on $dir");
+		throw new \Exception("Failed to disable site on $dir");
 	}
 
 	protected function disableMaintenanceOnSite($dir) {
@@ -110,11 +110,11 @@ class Maintenancer {
 		if (is_dir(getcwd() . "/$dir.prod") && is_dir(getcwd() . "/$dir")) {
 			rename($dir, $dir . ".maint");
 			rename($dir . ".prod", $dir);
-			echo " -- Site $dir -- maintenance DISABLED\n";
+			echo " -- Site $dir -- site ENABLED\n";
 			return;
 		}
 
-		throw new \Exception("Failed to disable maintenance on $dir");
+		throw new \Exception("Failed to enable site on $dir");
 	}
 
 	public function run() {
@@ -141,7 +141,7 @@ class Maintenancer {
 			echo "\n !! Not all sites can be switched!\n\n";
 			exit(1);
 			break;
-		case 'enable':
+		case 'disable':
 			if (!$ok) {
 				echo " !! Some sites can not be switched, exiting.\n";
 				exit(1);
@@ -152,7 +152,7 @@ class Maintenancer {
 			echo "\n -- All done\n";
 			exit(0);
 			break;
-		case 'disable':
+		case 'enable':
 			if (!$ok) {
 				echo " !! Some sites can not be switched, exiting.\n";
 				exit(1);
@@ -176,4 +176,5 @@ class Maintenancer {
 $maintenancer = new Maintenancer();
 
 $maintenancer->run();
+
 
